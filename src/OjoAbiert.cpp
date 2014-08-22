@@ -64,12 +64,15 @@ int main( int argc, char** argv )
   addWeighted( abs_grad_x, 0.5, abs_grad_y, 0.5, 0, grad );
   moveWindow(window_sobel,300,0);
   imshow( window_sobel, grad );
-  threshold( grad, grad, 30, 255,1 );
+  threshold( grad, grad, 70, 255,1 );////////////////////Cambie este original 30
   namedWindow( window_thres2, CV_WINDOW_AUTOSIZE );
   moveWindow(window_thres2,450,0);
   imshow( window_thres2, grad );
+  std::cout<<mean(grad)<<std::endl;
   std::cout<<"Filas: "<<grad.rows<<"	"<<"Columnas: "<<grad.cols<<std::endl;
-  dilate(grad,grad,0);
+  //dilate(grad,grad,0);
+  erode(grad,grad,0);
+  std::cout<<mean(grad)<<std::endl;
   morphologyEx( grad, grad, 3, 0 );
 /*  int minHessian = 400;
   SurfFeatureDetector detector( minHessian );
