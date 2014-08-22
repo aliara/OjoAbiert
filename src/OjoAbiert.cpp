@@ -1,5 +1,8 @@
 #include "opencv2/imgproc/imgproc.hpp"
 #include "opencv2/highgui/highgui.hpp"
+#include "opencv2/features2d/features2d.hpp"
+#include "opencv2/nonfree/features2d.hpp"
+#include "opencv2/core/core.hpp"
 #include <stdlib.h>
 #include <iostream>
 
@@ -16,6 +19,7 @@ int main( int argc, char** argv )
   char* window_threshold = "Threshold";
   char* window_thres2 = "Segundo umbral";
   char* window_canny = "Canny";
+  char* window_main = "Ventana principal";
   int scale = 1;
   int delta = 0;
   int ddepth = CV_16S;
@@ -35,7 +39,7 @@ int main( int argc, char** argv )
   namedWindow( window_gray, CV_WINDOW_AUTOSIZE );
   moveWindow(window_gray,0,0);
   imshow(window_gray,src_gray);
-  threshold( src_gray, src_gray, 65, 255,2 );
+  threshold( src_gray, src_gray, 90, 255,2 );
   namedWindow( window_threshold, CV_WINDOW_AUTOSIZE );
   moveWindow(window_threshold,150,0);
   imshow(window_threshold,src_gray);
@@ -65,12 +69,24 @@ int main( int argc, char** argv )
   moveWindow(window_thres2,450,0);
   imshow( window_thres2, grad );
   std::cout<<"Filas: "<<grad.rows<<"	"<<"Columnas: "<<grad.cols<<std::endl;
+  dilate(grad,grad,0);
+  morphologyEx( grad, grad, 3, 0 );
+/*  int minHessian = 400;
+  SurfFeatureDetector detector( minHessian );
+  std::vector<KeyPoint> keypoints_1;
+  detector.detect(src_gray, keypoints_1);
+  SurfDescriptorExtractor extractor;
+  Mat descriptors_1;
+  extractor.compute( grad, keypoints_1, descriptors_1 );
+  Mat img_keypoints_1;
+  drawKeypoints( src_gray, keypoints_1, img_keypoints_1, Scalar::all(-1), DrawMatchesFlags::DEFAULT );
+*/
   Canny(grad, grad, 50, 200, 3);
   namedWindow( window_canny, CV_WINDOW_AUTOSIZE );
   moveWindow(window_canny,600,0);
-    imshow( window_canny, grad );
+  imshow( window_canny, grad );
   vector<Vec2f> lines;
-  HoughLines(grad, lines, 20, CV_PI/180, 100, 0, 0 );
+  HoughLines(grad, lines, 1, (CV_PI/180), 15, 0, 0 );
   std::cout<<"Lineas detectadas: "<<lines.size()<<std::endl;
   for( size_t i = 0; i < lines.size(); i++ )
   {
@@ -82,9 +98,11 @@ int main( int argc, char** argv )
     pt1.y = cvRound(y0 + 1000*(a));
     pt2.x = cvRound(x0 - 1000*(-b));
     pt2.y = cvRound(y0 - 1000*(a));
-    line( src_gray, pt1, pt2, Scalar(0,0,0), 3, CV_AA);
+    line( src, pt1, pt2, Scalar(0,0,255), 3, CV_AA);
   }
-
+  namedWindow( window_main, CV_WINDOW_AUTOSIZE );
+  moveWindow(window_main,800,0);
+  imshow(window_main,src);
 
 
   waitKey(0);
