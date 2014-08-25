@@ -3,6 +3,7 @@
 #include "opencv2/features2d/features2d.hpp"
 #include "opencv2/nonfree/features2d.hpp"
 #include "opencv2/core/core.hpp"
+#include <opencv/cv.h>
 #include <stdlib.h>
 #include <iostream>
 
@@ -36,10 +37,14 @@ int main( int argc, char** argv )
 
   /// Convert it to gray
   cvtColor( src, src_gray, CV_RGB2GRAY );
+  //equalizeHist(src_gray,src_gray);
+  //bitwise_not(src_gray,src_gray);
   namedWindow( window_gray, CV_WINDOW_AUTOSIZE );
   moveWindow(window_gray,0,0);
   imshow(window_gray,src_gray);
-  threshold( src_gray, src_gray, 90, 255,2 );
+  //equalizeHist(src_gray,src_gray);
+  threshold( src_gray, src_gray, 100, 255,2 );////////////////////Cambie este original 100
+  //equalizeHist(src_gray,src_gray);
   namedWindow( window_threshold, CV_WINDOW_AUTOSIZE );
   moveWindow(window_threshold,150,0);
   imshow(window_threshold,src_gray);
@@ -64,16 +69,19 @@ int main( int argc, char** argv )
   addWeighted( abs_grad_x, 0.5, abs_grad_y, 0.5, 0, grad );
   moveWindow(window_sobel,300,0);
   imshow( window_sobel, grad );
+  //equalizeHist(grad,grad);
   threshold( grad, grad, 70, 255,1 );////////////////////Cambie este original 30
+  //equalizeHist(grad,grad);
   namedWindow( window_thres2, CV_WINDOW_AUTOSIZE );
   moveWindow(window_thres2,450,0);
   imshow( window_thres2, grad );
   std::cout<<mean(grad)<<std::endl;
   std::cout<<"Filas: "<<grad.rows<<"	"<<"Columnas: "<<grad.cols<<std::endl;
-  //dilate(grad,grad,0);
+  dilate(grad,grad,0);
   erode(grad,grad,0);
+  //std::cout<<mean(grad)<<std::endl;
+  //morphologyEx( grad, grad, 2, 0 );
   std::cout<<mean(grad)<<std::endl;
-  morphologyEx( grad, grad, 3, 0 );
 /*  int minHessian = 400;
   SurfFeatureDetector detector( minHessian );
   std::vector<KeyPoint> keypoints_1;
